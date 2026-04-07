@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCity | AI Citizen Dashboard</title>
+    <meta name="description" content="A live AI-powered dashboard for modern citizens, providing real-time city data and intelligent support.">
+    
+    <!-- External Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>City Hub</h1>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Citizen Command Center v2.4</p>
+        </div>
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            LIVE SYSTEMS
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- Weather Card -->
+        <article class="card" id="card-weather">
+            <div class="loading"><div class="spinner"></div></div>
+            <div class="card-header">
+                <span class="card-title">Weather Status</span>
+                <button class="refresh-btn" onclick="fetchWeather()" title="Refresh Weather">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="val-primary" id="weather-temp">--°C</div>
+                <div class="sub-val" id="weather-wind">Wind: -- km/h</div>
+                <p class="error-msg" id="weather-error">Check Connection</p>
+        </article>
+
+        <!-- Currency Card -->
+        <article class="card" id="card-currency">
+            <div class="loading"><div class="spinner"></div></div>
+            <div class="card-header">
+                <span class="card-title">Global Markets (USD)</span>
+                <button class="refresh-btn" onclick="fetchCurrency()" title="Refresh Rates">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                </button>
+            </div>
+            <div class="card-content">
+                <div class="sub-val" id="curr-inr">₹ -- INR</div>
+                <div class="sub-val" id="curr-eur">€ -- EUR</div>
+                <div class="sub-val" id="curr-gbp">£ -- GBP</div>
+            </div>
+            <p class="error-msg" id="curr-error">API Unavailable</p>
+        </article>
+
+        <!-- Profile Card -->
+        <article class="card" id="card-profile">
+            <div class="loading"><div class="spinner"></div></div>
+            <div class="card-header">
+                <span class="card-title">Citizen Profile</span>
+                <button class="refresh-btn" onclick="fetchCitizen()" title="Generate Random Profile">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                </button>
+            </div>
+            <div class="card-content profile-info">
+                <img src="" alt="Citizen" id="citizen-img" class="profile-img" style="display: none;">
+                <div>
+                    <div id="citizen-name" style="font-weight: 600;">--</div>
+                    <div id="citizen-city" class="sub-val" style="font-size: 0.85rem;">--</div>
+                    <div id="citizen-email" class="sub-val" style="font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">--</div>
+                </div>
+            </div>
+            <p class="error-msg" id="profile-error">Load Failed</p>
+        </article>
+
+        <!-- City Fact Card -->
+        <article class="card" id="card-fact">
+            <div class="loading"><div class="spinner"></div></div>
+            <div class="card-header">
+                <span class="card-title">City Trivia</span>
+                <button class="refresh-btn" onclick="fetchFact()" title="New Fact">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path></svg>
+                </button>
+            </div>
+            <div class="card-content">
+                <p class="fact-text" id="fact-body">Loading interesting facts about our world...</p>
+            </div>
+            <p class="error-msg" id="fact-error">Trivia Offline</p>
+        </article>
+    </main>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget">
+        <div id="chat-bubble" onclick="toggleChat()">
+            <svg id="chat-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <svg id="close-icon" style="display: none;" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+
+        <div id="chat-window">
+            <div class="chat-header">
+                <div style="width: 10px; height: 10px; background: var(--accent); border-radius: 50%;"></div>
+                <h3>Citizen Assistant</h3>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="msg msg-ai">Hello! I'm your SmartCity AI. Ask me about the current dashboard data!</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Ask about dashboard data..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button id="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
